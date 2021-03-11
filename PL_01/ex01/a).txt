@@ -1,0 +1,9 @@
+O output deste código é para o processo pai:
+
+2. x = 0
+3. 1234; x = 0;
+
+E para o processo filho:
+
+1. x = 2
+3. 0; x = 2;
