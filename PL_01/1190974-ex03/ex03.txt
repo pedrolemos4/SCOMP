@@ -1,0 +1,5 @@
+#3
+
+A) São criados 8 processos.
+
+C) 8 vezes.

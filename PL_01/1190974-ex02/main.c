@@ -1,18 +1,33 @@
 #include <stdio.h>
-#include <sys/types.h>
+#include <stdlib.h>
 #include <unistd.h>
-
-
-int main(void){
-	int x = 1;
-	pid_t p = fork(); 	
-	if(p == 0){
-		x = x+1;
-		printf("1. x = %d\n", x);
-	} else {
-		x = x-1;
-		printf("2. x = %d\n", x);
-	}
-	printf("3. %d; x = %d\n", p, x);
-	return 0;
+#include <sys/wait.h>
+int main(void) {
+    pid_t p;
+    int status;
+    printf("I'm..\n");
+    
+    p = fork();
+    if(p == 0) {
+        printf("I'll never join you!\n");
+        exit(0);
+    }
+    wait(&status);
+    printf("the..\n");
+    
+    p = fork();
+    if(p == 0) {
+        printf("I'll never join you!\n");
+        exit(0);
+    }
+    wait(&status);
+    printf("father!\n");
+    
+    p = fork();
+    if(p == 0) {
+        printf("I'll never join you!\n");
+        exit(0);
+    }
+    wait(&status);
+    return 0;
 }
