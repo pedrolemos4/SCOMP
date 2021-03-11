@@ -1,0 +1,7 @@
+#1
+
+A) 	Pai : 1. x = 2 3. 0; x = 0
+	Filho: 2. x = 2 3. 1234; x=2
+	Isto deve-se ao valor de p ser diferente no processo pai e filho, sendo para o pai p = 1234 e para o filho 0. No final ambos executam a linha 11.
+	
+B) Não é sempre garantido porque não se sabe qual deles começa primeiro.
