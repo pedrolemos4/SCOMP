@@ -1,0 +1,1 @@
+Acrescentar "exit();" após "sleep();" na linha 8. 
