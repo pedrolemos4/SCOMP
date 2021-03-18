@@ -32,12 +32,14 @@ int main ()
 	if(p>0){
 		for(i=0; i <500; i++){
 			if(numbers[i] == n){
+				printf("a\n");
 				f_half++;
 			}
 		}
 	} else {
 		for(i = 500 ; i < 1000; i++ ){
 			if(numbers[i] == n){
+				printf("b\n");
 				s_half++;
 			}
 		}
