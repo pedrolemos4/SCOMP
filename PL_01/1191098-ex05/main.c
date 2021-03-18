@@ -12,8 +12,8 @@ int main(){
 	for(i=0;i<2;i++){
 		p = fork();
 		if(p<=0){
-			sleep(1);
-			exit(1);
+			sleep(i+1);
+			exit(i+1);
 		}
 	}
 	
