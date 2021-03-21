@@ -30,5 +30,10 @@ int main ()
 		wait(&status);
 	}
 	
+	/* A)
+	 * Não é garantido que o output esteja sempre ordenado uma vez que a
+	 * sua ordenação tem a ver com os escalonamentos realizados.
+	 * */
+	
 	return 0;
 } 
