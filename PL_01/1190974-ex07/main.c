@@ -42,6 +42,7 @@ int main(void) {
 			}
 		}
 	}
+	/*Wait está aqui para o processo pai não continuar sem o processo filho termine*/
     wait(&status);
     printf("N: %d\n",n);
     int total = amountp + amountf;
