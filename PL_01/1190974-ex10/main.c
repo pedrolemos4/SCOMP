@@ -8,32 +8,39 @@
 
 int main ()
 {
-	int numbers[ARRAY_SIZE], status,i,k,valor=0,index=255;
-	for (i = 0; i < ARRAY_SIZE; i++)
-		numbers[i] = rand () % 10000;
-	int n = numbers[623];	 
+	int i, j, array[ARRAY_SIZE];
+	pid_t p, waitId;
+	int num = 10, status = 0;
 	
-	for(k=0;k<10;k++){
-		pid_t p ;
-		p=fork();
+	/* preencher vetor com números aleatórios */
+	for(i = 0; i < ARRAY_SIZE; i++) {
+		array[i] = rand() % 50;
+	} 
 	
-		if(p==0){
-			for(i=valor;i<valor+200;i++){
-				if(n==numbers[i]){
-					index=i;
+	for(j = 0 ; j < 10; j++) {
+		p = fork();
+		if(p == 0) {
+			/* procurar no vetor o número pedido num conjunto de 200 números */
+			int minLim = 200 * j;
+			int maxLim = 200 * j + 200;
+			for(i = minLim; i < maxLim; i++) {
+				if(array[i] == num) {
+					/* devolver o índice relativo onde o número foi encontrado
+					numa escala de 0 a 200 */
+					exit(200 - (maxLim - i));
 				}
 			}
-		valor=i;
-		}else{
-			exit(1);
+			exit(255);
 		}
 	}
 	
-	for(i=0;i<10;i++){
-		wait(&status);
+	while((waitId = wait(&status)) > 0) {
+		if(WEXITSTATUS(status) == 255) {
+			printf("Número não encontrado\n");
+		} else {
+			printf("Número encontrado entre 0 e %d\n", WEXITSTATUS(status));
+		}
 	}
-	
-	printf("Index= %d.\n",index);
 	
 	return 0;
 } 
