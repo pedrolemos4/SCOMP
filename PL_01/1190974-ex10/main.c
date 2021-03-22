@@ -32,7 +32,7 @@ int main ()
 			}
 			exit(255);
 		}
-	}
+	} 
 	
 	while((waitId = wait(&status)) > 0) {
 		if(WEXITSTATUS(status) == 255) {
