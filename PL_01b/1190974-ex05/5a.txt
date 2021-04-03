@@ -1,0 +1,2 @@
+A) Ao fazer ctrl+c no terminal o programa pára, visto que ctrl+c envia um sinal, SIGINT,
+ao processo que está a correr e consequentemente o programa pára e volta à shell prompt.

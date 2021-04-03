@@ -1,0 +1,1 @@
+F) "kill %1" envia um sinal ao processo especificado por "%1", que é o processo no topo da stack de jobs.

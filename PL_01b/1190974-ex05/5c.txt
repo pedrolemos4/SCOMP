@@ -1,0 +1,2 @@
+C) Ao fazer ctrl+\ no terminal o processo termina, visto que ctrl+\ envia o sinal, SIGQUIT, ao processo 
+que está a correr e consequentemente o programa pára e volta à shell prompt, semelhante ao SIGINT.

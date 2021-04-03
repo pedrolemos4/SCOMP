@@ -1,0 +1,1 @@
+E) Cada vez que envio o sinal SIGQUIT ou SIGINT a partir de outro terminal o processo é interrompido.
