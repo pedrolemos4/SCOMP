@@ -19,10 +19,9 @@ int main() {
 	act.sa_sigaction = handle_signal;
 	sigaction(SIGUSR1, &act, NULL);
 		
-		for(;;){
-			printf("I'm working!\n");
-		}
-	
+	for(;;){
+		printf("I'm working!\n");
+	}
 	
 	return 0;
 }

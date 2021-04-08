@@ -12,12 +12,16 @@ void handle_SIGINT (int signo, siginfo_t *sinfo, void *context){
 
 int main() {
 
+	struct sigaction act;
+	memset(&act, 0, sizeof(struct sigaction));
+	sigemptyset(&act.sa_mask); /* No signals blocked */
+	act.sa_sigaction = handle_SIGINT;
+	sigaction(SIGINT, &act, NULL);
+	
 	for(;;){
-		struct sigaction act;
-		memset(&act, 0, sizeof(struct sigaction));
-		sigemptyset(&act.sa_mask); /* No signals blocked */
-		act.sa_sigaction = handle_SIGINT;
-		sigaction(SIGINT, &act, NULL);
+		printf("I Like Signal\n");
+		sleep(1);
 	}
+	
 	return 0;
 }

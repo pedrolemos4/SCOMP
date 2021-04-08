@@ -19,7 +19,10 @@ int main() {
 	act.sa_sigaction = handle_signal;
 	sigaction(SIGUSR1, &act, NULL);
 	
-	for(;;){}
+	for(;;){
+		printf("I Like Signal\n");
+		sleep(1);
+	}
 	
 	return 0;
 }
