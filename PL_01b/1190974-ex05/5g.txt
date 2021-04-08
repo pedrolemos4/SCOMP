@@ -1,0 +1,2 @@
+G) Deve ser usada a função write pois a função printf não é uma função segura para usar em handlers
+visto que é uma função que não é async-safe.
