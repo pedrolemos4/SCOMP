@@ -1,0 +1,2 @@
+A função read só é executada quando existe informação no descritor, por isso
+não são necessários mecanismos de sincronização como o wait.
