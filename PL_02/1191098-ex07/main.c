@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
 				read(*(fd + j*2), &readN, 4);
 				finalResult[(j*200) + a] = readN;
 			}
-			close(*(fd + k *2));
+			close(*(fd + j *2));
 		
 	}
 
