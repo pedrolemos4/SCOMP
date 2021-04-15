@@ -1,0 +1,3 @@
+a) Não porque o comando ps apenas mostra os processos da shell.
+
+b) O processo filho apresentado na lista de processos em execução é um processo zombie, uma vez que este terminou antes de o pai, o qual não esperou pelo filho.
