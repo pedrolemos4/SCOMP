@@ -1,0 +1,19 @@
+a)  A função signal() é usada para funções, enquanto que a sigaction() permite implementar um handler para controlar a reação de um processo a um sinal recebido.
+
+b)  int sigaction(int sig, const struct sigaction * act, struct sigaction * oact);
+sig refere-se ao sinal que pode ser recebido e para o qual queremos preparar uma ação ao recebermos
+act define a ação a ser realizada aquando a receção do sinal
+oact serve para armazenar os detalhes da ação definida
+
+e)  Só podemos usar "async-signal-safe functions". Temos como exemplos:
+    - close(),
+    - execle(),
+    - execv(),
+    - kill(),
+    - memset(),
+    - mkdir(),
+    - read(),
+    - execve(),
+    - getpid(),
+    - getppid(),
+    - strcat().
