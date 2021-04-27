@@ -32,6 +32,7 @@ int main (int argc, char *argv[]){
 		
 	for (i = 0; i < ARRAY_SIZE; i++){
 		array[i] = rand () % 500 +1 ;
+		printf("Array[%d]: %d\n",i,array[i]);
 	}
 	
 	for(i=0; i < 10; i++){
