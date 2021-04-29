@@ -1,0 +1,1 @@
+5) Não vai ser igual visto que não conseguimos controlar qual dos processos prevalece podendo somar ou subtrair o valor mais vezes.
