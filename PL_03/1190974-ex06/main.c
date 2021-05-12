@@ -10,13 +10,19 @@
 #include <string.h>
 
 #define ARRAY_SIZE 1000000
-#define DATA_SIZE ARRAY_SIZE*4
 
+typedef struct{
+	int number;
+	int canRead;
+	int canWrite;
+} aux;
 
 int main (int argc, char *argv[]){
 	int fd,i,r,k,numRead;
+	int DATA_SIZE = sizeof(aux);
 	int array [ARRAY_SIZE];
-	int *s1, *s2;
+	aux *s1;
+	int s2;
 	clock_t startShm, endShm, startPipe, endPipe;
 	
 	int fdPipe[2];
@@ -26,33 +32,32 @@ int main (int argc, char *argv[]){
 	for(i = 0; i < ARRAY_SIZE; i++) {
 		array[i] = rand() % 10;
 	}
-	
 
 	fd = shm_open("/shmex6", O_CREAT|O_EXCL|O_RDWR,
 		S_IRUSR|S_IWUSR);
 	ftruncate(fd,DATA_SIZE);
-	s1 = (int*)mmap(NULL,DATA_SIZE,PROT_READ|PROT_WRITE,
+	s1 = (aux*)mmap(NULL,DATA_SIZE,PROT_READ|PROT_WRITE,
 		MAP_SHARED,fd,0);
 	
-	int canRead = 0;
-	int canWrite = 1;
+	s1->canRead = 0;
+	s1->canWrite = 1;
 	pid = fork();
 	if(pid>0){
 		srand((unsigned) time(NULL));
 		startShm = clock();
 		for(i=0;i<ARRAY_SIZE;i++){
-			while(canWrite==0);
-			canWrite=0;
-			*(s1+i)=array[i];
-			canRead=1;
+			while(s1->canWrite==0);
+			s1->canWrite=0;
+			s1->number=array[i];
+			s1->canRead=1;
 		}
 		wait(NULL);
 	} else {
 		for(k=0;k<ARRAY_SIZE;k++){
-			while(canRead==0);
-			canRead=0;
-			numRead = *(s1+i);
-			canWrite = 1;
+			while(s1->canRead==0);
+			s1->canRead=0;
+			numRead = s1->number;
+			s1->canWrite = 1;
 		}
 		exit(0);
 	}
@@ -60,7 +65,7 @@ int main (int argc, char *argv[]){
 	
 	float timeShm = (float) (endShm - startShm) / CLOCKS_PER_SEC;
 	printf("Tempo de transferência usando a memória partilhada = %f segundos\n", timeShm);
-	r = munmap(s1, DATA_SIZE); 		/* disconnects */
+	r = munmap(s1, DATA_SIZE); 	/* disconnects */
 	if (r < 0){ 					/* Check error */
 		 exit(1);
 	}
@@ -84,14 +89,14 @@ int main (int argc, char *argv[]){
 		close(fdPipe[0]);
 		startPipe = clock();
 		for(i=0; i < ARRAY_SIZE; i++){
-			write(fdPipe[1],&(array[i]),sizeof(DATA_SIZE));
+			write(fdPipe[1],&(array[i]),sizeof(int));
 		}
 		close(fdPipe[1]);
 		wait(NULL);
 	} else {
 		close(fdPipe[1]);
 		for(k=0; k<ARRAY_SIZE; k++){
-			read(fdPipe[0],&s2,sizeof(DATA_SIZE));
+			read(fdPipe[0],&s2,sizeof(int));
 		}
 		close(fdPipe[0]);
 		exit(0);
