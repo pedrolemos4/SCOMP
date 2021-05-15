@@ -29,9 +29,9 @@ int main (int argc, char *argv[]){
 	s1 = (sharedStruct*)mmap(NULL,data_size,PROT_READ|PROT_WRITE,
 		MAP_SHARED,fd,0);
 		
-	char ficheiros[10][50] = {"./files/ficheiro01.txt", "./files/ficheiro02.txt", "./files/ficheiro03.txt", "./files/ficheiro04.txt", "./files/ficheiro05.txt",
-	"./files/ficheiro06.txt", "./files/ficheiro07.txt", "./files/ficheiro08.txt", "./files/ficheiro09.txt", "./files/ficheiro10.txt"};
-	char palavra[25] = "Tiago";
+	char ficheiros[10] = {"files/ficheiro01.txt", "files/ficheiro02.txt", "files/ficheiro03.txt", "files/ficheiro04.txt", "files/ficheiro05.txt",
+	"files/ficheiro06.txt", "files/ficheiro07.txt", "files/ficheiro08.txt", "files/ficheiro09.txt", "files/ficheiro10.txt"};
+	char *palavra = "Tiago";
 	
 	for(i=0;i<10;i++){
 		sharedStruct *filho = (s1 + (i*sizeof(sharedStruct)));

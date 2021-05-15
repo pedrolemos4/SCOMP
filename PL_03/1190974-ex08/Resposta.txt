@@ -1,0 +1,1 @@
+8) Os resultados irão ser diferentes cada vez que o código é executado.

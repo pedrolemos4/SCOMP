@@ -1,0 +1,1 @@
+10) O número recomendado de processos deve ser igual ao número de cores do computador a ser usado
