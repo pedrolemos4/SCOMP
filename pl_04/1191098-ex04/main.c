@@ -68,7 +68,11 @@ int main() {
 	sem_post(sem);
 	
 	int answer;
-	do{
+	pid_t pid;
+	for(i=0;i<2;i++){
+	pid=fork();
+	if(pid==0){
+	//do{
 		printf("Deseja eliminar alguma string? 1-Sim ou 0-Nao\n");
 		scanf("%d", &answer);
 		
@@ -90,11 +94,14 @@ int main() {
 				for(i = 0; i < s1->posicao; i++) {
 					printf("%s\n", s1->frases[i]);
 				}
+				sleep(15);
 				sem_post(sem);
 			}
+			exit(0);
 		}
-	} while(answer != 0);
-	
+	//} while(answer != 0);
+}
+}
 	
 	r = munmap(s1, data_size); 		/* disconnects */
 	if (r < 0){ 					/* Check error */
