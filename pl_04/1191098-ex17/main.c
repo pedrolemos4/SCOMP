@@ -1,122 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <semaphore.h>
-#include <time.h>
+#include <string.h>
 
-#define NUM_VISITORS 305 /* número de processos filho */
-#define MAX_VISITORS 300 /* quantidade máxima de visitantes */
+#define NUMBER_CARS 4
 
-#define VIP_ID 0 /* identificador de um visitante VIP */
-#define SPECIAL_ID 1 /* identificador de um visitante Special */
-#define NORMAL_ID 2 /* identificador de um visitante Normal */
-
-#define SEM_NAME_1 "semaforo1" /* nome do primeiro semáforo */
-#define SEM_NAME_2 "semaforo2" /* nome do segundo semáforo */
-#define SEM_NAME_3 "semaforo3" /* nome do terceiro semáforo */
-#define SEM_NAME_4 "semaforo4" /* nome do quarto semáforo */
-
-int main() {
-	/* fechar os semáforos */
-	sem_unlink(SEM_NAME_1);
-	sem_unlink(SEM_NAME_2);
-	sem_unlink(SEM_NAME_3);
-	sem_unlink(SEM_NAME_4);
+int main (int argc, char *argv[]){
+	int valor, valor1, valor2, amount;
+	sem_t *sem_vip, *sem_special, *sem_normal, *sem_amount;
+	pid_t pid;
 	
-	int i, id, numVip = 0, numSpecial = 0;
-	
-	sem_t *semVip; /* controla a entrada de visitantes VIP */
-	sem_t *semSpecial; /* controla a entrada de visitantes Special */
-	sem_t *semNormal; /* controla a entrada de visitantes Normal */
-	sem_t *semVisitors; /* controla a capacidade restante do cinema */
-	
-	/* criar semáforos */
-	if((semVip = sem_open(SEM_NAME_1, O_CREAT, 0644, 0)) == SEM_FAILED) {
-		perror("Failed sem_open\n");
-		return 1;
-	}
-	if((semSpecial = sem_open(SEM_NAME_2, O_CREAT, 0644, 0)) == SEM_FAILED) {
-		perror("Failed sem_open\n");
-		return 1;
-	}
-	if((semNormal = sem_open(SEM_NAME_3, O_CREAT, 0644, 0)) == SEM_FAILED) {
-		perror("Failed sem_open\n");
-		return 1;
-	}
-	if((semVisitors = sem_open(SEM_NAME_4, O_CREAT, 0644, MAX_VISITORS)) == SEM_FAILED) {
-		perror("Failed sem_open\n");
-		return 1;
+	if((sem_amount= sem_open("sem_amount",O_CREAT|O_EXCL,0644,300)) == SEM_FAILED){
+		perror("Error in sem_open()");
+		exit(1);
 	}
 	
-	for(i = 0; i < NUM_VISITORS; i++) {
-		if(i % 3 == VIP_ID)
-			numVip++; /* aumenta o número de VIPs na fila de espera */
-		if(i % 3 == SPECIAL_ID)
-			numSpecial++; /* número de Specials na fila de espera aumenta */
+	if((sem_vip= sem_open("sem_vip",O_CREAT|O_EXCL,0644,250)) == SEM_FAILED){
+		perror("Error in sem_open()");
+		exit(1);
 	}
 	
-	for(i = 0; i < NUM_VISITORS; i++) {
-		pid_t pid = fork();
-		if(pid == -1) {
-			perror("Failed fork\n");
-			exit(1);
-		} else if(pid == 0) {
-			while(1) {
-				id = i % 3; /* atribuição de uma classificação ao visitante (VIP, Special, Normal) */
-				
-				if(id == VIP_ID) { /* se o visitante for VIP */
-					sem_post(semVip);
-					sem_wait(semVip); /* entrada de um VIP */
-					sem_wait(semVisitors); /* quantidade de lugares vazios diminui */
-					
-					printf("Visitante VIP %d entrou\n", i + 1);
-					numVip = numVip - 1; /* diminui o número de VIPs na fila de espera */
-					
-				} else if(id == SPECIAL_ID) { /* se o visitante for Special */
-					sem_post(semSpecial);
-					sem_wait(semSpecial); /* entrada de um Special */
-					sem_wait(semVisitors); /* quantidade de lugares vazios diminui */
-					
-					printf("Visitante Special %d entrou\n", i + 1);
-					numSpecial--; /* número de Specials na fila de espera diminui */
-					
-				} else { /* se o visitante for Normal */
-					sem_post(semNormal);
-					sem_wait(semNormal); /* entrada de um visitante Normal */
-					sem_wait(semVisitors); /* quantidade de lugares vazios diminui */
-					printf("Visitante Normal %d entrou\n", i + 1);
-				} 
-				
-				sleep(5); /* tempo que os visitantes ficam no cinema */
-				
-				sem_post(semVisitors); /* quantidade de lugares vagos aumenta */
-				printf("Visitante %d saiu\n", i + 1);
-				
-				if(numVip > 0) { /* VIPs entram em primeiro lugar */
-					sem_post(semVip);
-				} else if(numVip <= 0 && numSpecial > 0) { /* Specials entram em segundo lugar */
-					sem_post(semSpecial);
-				} else if(numVip <= 0 && numSpecial <= 0) {
-					sem_post(semNormal); /* Visitantes Normal entram em último lugar */
+	if((sem_special= sem_open("sem_special",O_CREAT|O_EXCL,0644,60)) == SEM_FAILED){
+		perror("Error in sem_open()");
+		exit(1);
+	}
+	
+	if((sem_normal= sem_open("sem_normal",O_CREAT|O_EXCL,0644,10)) == SEM_FAILED){
+		perror("Error in sem_open()");
+		exit(1);
+	}
+	
+	pid=fork();	
+	if(pid==0){
+		sem_getvalue(sem_amount,&amount);
+		while(amount>0){
+			sem_getvalue(sem_vip, &valor);
+			if(valor>0){
+				printf("Visitante VIP %d\n",valor);
+				sem_wait(sem_vip);
+				sem_wait(sem_amount);
+			}else{
+				sem_getvalue(sem_special, &valor1);
+				if(valor1>0){
+					printf("Visitante SPECIAL %d\n",valor1);
+					sem_wait(sem_special);
+					sem_wait(sem_amount);
+					sem_post(sem_amount);	
+				}else{
+					sem_getvalue(sem_normal, &valor2);
+					if(valor2>0){
+						printf("Visitante NORMAL %d\n",valor2);
+						sem_wait(sem_normal);
+						sem_wait(sem_amount);
+						sem_post(sem_amount);	
+					}else{
+						printf("%d lugares livres\n",300-amount);
+						exit(0);
+					}
 				}
-				exit(0);
 			}
 		}
+		
+		exit(0);
 	}
 	
-	for(i = 0; i < NUM_VISITORS; i++)
-		wait(NULL);
 	
-	/* fechar os semáforos */
-	sem_unlink(SEM_NAME_1);
-	sem_unlink(SEM_NAME_2);
-	sem_unlink(SEM_NAME_3);
-	sem_unlink(SEM_NAME_4);
+	sem_unlink("sem_vip");
+	sem_unlink("sem_special");
+	sem_unlink("sem_amount");
+	sem_unlink("sem_normal");
 	
 	return 0;
 }
+
