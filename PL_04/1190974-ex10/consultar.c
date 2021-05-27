@@ -14,7 +14,7 @@
 int main(){
 	
 	int fd, r, data_size =sizeof(sharedStruct);
-	int i;
+	int number,i;
 	
 	sharedStruct *s1;
 	
@@ -27,21 +27,27 @@ int main(){
 		MAP_SHARED,fd,0);
 	
 	sem_t *sem;
-	if ((sem = sem_open("semex10ConsultAll", O_EXCL, 0644, 1)) == SEM_FAILED) {
+	if ((sem = sem_open("semex10Consult", O_EXCL, 0644, 1)) == SEM_FAILED) {
 		perror("Erro a criar o semaforo.\n");
 		exit(0);
 	}
 	
 	sem_wait(sem);
 	
-	sleep(50);
+	
 	if(s1->posicao==0){
 		printf("Não existem registos.\n");
 	}
 	
-	for(i = 0 ; i < s1->posicao;i++){
+	printf("Insira o número do utilizador que pretende procurar\n");
+	scanf("%d",&number);
+	
+	
+	for(i=0; i<s1->posicao;i++){
 		user* user = &(s1->users[i]);
-		printf("Número do User: %d\nNome do User: %s\nMorada do User: %s\n",user->number,user->name,user->address);
+		if(user->number==number){
+			printf("Número do User: %d\nNome do User: %s\nMorada do User: %s\n",user->number,user->name,user->address);
+		}
 	}
 	
 	sem_post(sem);
@@ -54,7 +60,6 @@ int main(){
 	if (r < 0){						/* Check error*/
 		 exit(1); 
 	}
-	
 	
 	return 0;
 }

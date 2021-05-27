@@ -14,7 +14,9 @@
 int main(){
 	
 	int fd, r, data_size =sizeof(sharedStruct);
-	int i;
+	int number;
+	char name[50];
+	char address[50];
 	
 	sharedStruct *s1;
 	
@@ -27,22 +29,27 @@ int main(){
 		MAP_SHARED,fd,0);
 	
 	sem_t *sem;
-	if ((sem = sem_open("semex10ConsultAll", O_EXCL, 0644, 1)) == SEM_FAILED) {
+	if ((sem = sem_open("semex10Insert", O_EXCL, 0644, 1)) == SEM_FAILED) {
 		perror("Erro a criar o semaforo.\n");
 		exit(0);
 	}
 	
 	sem_wait(sem);
+	user* u1 = &(s1->users[s1->posicao]);
 	
-	sleep(50);
-	if(s1->posicao==0){
-		printf("Não existem registos.\n");
-	}
+	printf("Insira o número do utilizador:");
+	scanf("%d",&number);
+	getc(stdin); //Para remover o '\n' seguido na leitura do numero
+	u1->number = number;
 	
-	for(i = 0 ; i < s1->posicao;i++){
-		user* user = &(s1->users[i]);
-		printf("Número do User: %d\nNome do User: %s\nMorada do User: %s\n",user->number,user->name,user->address);
-	}
+	printf("Insira o nome do utilizador:");
+	fgets(name,50,stdin);
+	strcpy(u1->name,name);
+	
+	printf("Insira a morada do utilizador:");
+	fgets(address,50,stdin);
+	strcpy(u1->address,address);
+	s1->posicao++;
 	
 	sem_post(sem);
 	
@@ -55,6 +62,6 @@ int main(){
 		 exit(1); 
 	}
 	
-	
 	return 0;
 }
+
