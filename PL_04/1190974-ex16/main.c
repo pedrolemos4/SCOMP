@@ -32,6 +32,7 @@ int main (int argc, char *argv[]){
 		for(i=0;i<NUMBER_CARS;i++){
 			sem_wait(sem_west);
 			printf("Car %d coming from east is on the bridge, wait\n",i);
+			sleep(30);
 			sem_post(sem_east);
 		}
 		exit(0);
@@ -39,6 +40,7 @@ int main (int argc, char *argv[]){
 		for(k=0;k<NUMBER_CARS;k++){
 			sem_wait(sem_east);
 			printf("Car %d coming from west is on the bridge, wait\n",k);
+			sleep(30);
 			sem_post(sem_west);
 		}
 		wait(NULL);
